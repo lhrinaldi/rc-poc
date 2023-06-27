@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "revenuecat-v2",
+      "source": "@revenuecat/v5.1#3bui71ulibgsx0t",
+      "integrity": "sha512-eRgo6V0ocltrWyxVcOdK9vXI5jnXG0mbTBtR00Lmjn1gAmOZtZtDlkUFuD3davY669+I02k1a8vk0Az+qrEViA==",
+      "installerVersion": "6.0.0"
+    },
+    {
+      "identifier": "revenuecat",
+      "source": "@revenuecat/v5.1#rx9voxflgd0mr0q",
+      "integrity": "sha512-Z68XNBBN+S4+r30DiDuu+ewI9d5OxYKVwmQEykRvGa4c8DXfZdVEfcjP8XvOQCg1UG0K0847sdb+dr3Ps21oyA==",
+      "installerVersion": "6.0.0"
+    }
+  ]
+}
