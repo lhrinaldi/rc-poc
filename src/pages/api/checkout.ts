@@ -29,6 +29,7 @@ export default async function handler(
     mode: "subscription",
     success_url: process.env.DOMAIN,
     cancel_url: process.env.DOMAIN,
+    customer_creation: "always",
     subscription_data: {
       trial_period_days: 7,
     },

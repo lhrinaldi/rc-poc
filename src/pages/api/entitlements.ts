@@ -1,9 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { Stripe } from "stripe";
 import rc from "@api/revenuecat";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-const RC_APP_PUBLIC_API_KEY = "strp_TnqoOYJXxSMjwGDbrqYLUmGYwKn";
+rc.auth(process.env.REVCAT_PUBLIC_KEY);
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,8 +13,6 @@ export default async function handler(
   const userId = req.query.user_id?.toString();
 
   if (!userId) return res.status(400);
-
-  rc.auth(RC_APP_PUBLIC_API_KEY);
 
   const response = await rc.subscribers({
     app_user_id: userId,
