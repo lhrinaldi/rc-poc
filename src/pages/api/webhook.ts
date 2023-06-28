@@ -1,13 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import rc from "@api/revenuecat";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Stripe } from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY, {
-  apiVersion: "2022-11-15",
-});
-
-rc.auth(process.env.REVCAT_PUBLIC_KEY);
+import Stripe from "stripe";
 
 // needs raw body - not parsed
 export const config = {
@@ -16,21 +10,34 @@ export const config = {
   },
 };
 
-async function buffer(readable: NextApiRequest) {
-  const chunks = [];
-  for await (const chunk of readable) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
-}
+const buffer = (req: NextApiRequest) => {
+  return new Promise<Buffer>((resolve, reject) => {
+    const chunks: Buffer[] = [];
 
-const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+    req.on("data", (chunk: Buffer) => {
+      chunks.push(chunk);
+    });
+
+    req.on("end", () => {
+      resolve(Buffer.concat(chunks));
+    });
+
+    req.on("error", reject);
+  });
+};
 
 // https://stripe.com/docs/payments/checkout/fulfill-orders
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+  const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY, {
+    apiVersion: "2022-11-15",
+  });
+
+  rc.auth(process.env.REVCAT_PUBLIC_KEY);
+
   const payload = await buffer(req);
   const sig = req.headers["stripe-signature"];
 
