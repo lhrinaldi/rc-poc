@@ -9,15 +9,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const userId = req.body.user_id;
   const product = await stripe.products.retrieve(req.body.product_id);
   const priceId =
     typeof product.default_price === "string"
       ? product.default_price
       : product.default_price?.id;
 
-  if (!priceId) return res.status(404);
+  if (!priceId || !userId) return res.status(404);
 
   const session = await stripe.checkout.sessions.create({
+    client_reference_id: userId,
     billing_address_collection: "auto",
     line_items: [
       {
@@ -26,10 +28,12 @@ export default async function handler(
         quantity: 1,
       },
     ],
+
     mode: "subscription",
     success_url: process.env.DOMAIN,
     cancel_url: process.env.DOMAIN,
-    customer_creation: "always",
+    // BIG QUESTION: https://www.revenuecat.com/docs/stripe#3-create-subscriptions-on-stripe
+    // customer_creation: "always",
     subscription_data: {
       trial_period_days: 7,
     },

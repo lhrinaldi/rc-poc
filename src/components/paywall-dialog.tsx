@@ -57,6 +57,12 @@ export function PaywallDialog({
                   >
                     <input
                       type="hidden"
+                      id="user-id"
+                      name="user_id"
+                      value={username}
+                    />
+                    <input
+                      type="hidden"
                       id="product-id"
                       name="product_id"
                       value={item.product.store_identifier}

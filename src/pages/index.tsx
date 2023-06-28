@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { PaywallDialog } from "../components/paywall-dialog";
 import { ProfileForm } from "../components/profile-form";
 import { axios } from "../lib/axios";
+import { PremiumDialog } from "../components/premium-dialog";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,13 +30,15 @@ export default function Home() {
         },
       })
   );
-  const showPaywall = useMemo(() => {
-    if (isLoading || !response) return false;
+  const subStatus = useMemo(() => {
+    if (isLoading || !response) return undefined;
 
     const { subscriber } = response.data;
-    return !(
-      process.env.NEXT_PUBLIC_REVCAT_ENTITLEMENT_ID in subscriber.entitlements
-    );
+
+    return process.env.NEXT_PUBLIC_REVCAT_ENTITLEMENT_ID in
+      subscriber.entitlements
+      ? "premium"
+      : "none";
   }, [isLoading, response]);
 
   return (
@@ -47,7 +50,11 @@ export default function Home() {
           setUsername(values.username);
         }}
       />
-      <PaywallDialog open={showPaywall} username={username} />
+      <PaywallDialog open={subStatus === "none"} username={username} />
+      <PremiumDialog
+        open={subStatus === "premium"}
+        content={response?.data.subscriber.entitlements}
+      />
     </main>
   );
 }

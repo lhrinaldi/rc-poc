@@ -74,7 +74,7 @@ export default async function handler(
       console.log({ stripeCustomer });
 
       // - Post receipt data to RevenueCat
-      rc.receipts(
+      await rc.receipts(
         {
           app_user_id: userId,
           fetch_token: token,
@@ -86,6 +86,7 @@ export default async function handler(
           "X-Platform": "stripe",
         }
       );
+
       // - Respond to Stripe to let them know we got the webhook
       res.status(200).end();
     } else {
